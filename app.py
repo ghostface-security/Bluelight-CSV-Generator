@@ -3,13 +3,25 @@ from tkinter import ttk, messagebox
 import csv
 
 def make_csv():
+    """
+    Calculates financial data and writes it to a CSV file.
+    Gathers values from the GUI, performs calculations, and handles
+    potential errors with a messagebox.
+    """
     try:
+        # Get values from the GUI variables
         company_assets = company_value_var.get()
         current_stock_count = current_stock_var.get()
         old_price_per_unit = old_unit_var.get()
         new_price_per_unit = new_unit_var.get()
         csv_file_name = file_name_var.get()
 
+        # Check for a valid file name
+        if not csv_file_name:
+            messagebox.showerror("Error", "Please enter a CSV file name.")
+            return
+
+        # Perform the financial calculations
         stock_cost = current_stock_count * old_price_per_unit
         stock_return = current_stock_count * new_price_per_unit
         year_profit = stock_return - stock_cost
@@ -17,10 +29,7 @@ def make_csv():
         new_value = company_assets + year_profit
         quarter_profit = year_profit * 0.25
 
-        if not csv_file_name:
-            messagebox.showerror("Error", "Please enter a CSV file name.")
-            return
-
+        # Write the data to a new CSV file
         with open(csv_file_name, "w", newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',')
             headers = [
@@ -41,26 +50,30 @@ def make_csv():
     except Exception as e:
         messagebox.showerror("Error", f"An unexpected error occurred: {e}")
 
+# --- GUI Setup ---
 app = tk.Tk()
 app.title("Bluelight Financial Report Generator")
 app.geometry('400x350')
 app.resizable(False, False)
 
+# Set up the style for a light, professional look
 style = ttk.Style(app)
-style.theme_use('clam')
+style.theme_use('default')
 
-bg_color = '#1e3d59'
-fg_color = 'white'
-accent_color = 'royal blue'
+# Define the new color palette
+bg_color = '#f0f0f0'  # Light gray background
+fg_color = '#333333'  # Dark gray for text
+accent_color = '#007bff' # A clean, professional blue
 
 app.configure(background=bg_color)
 style.configure('TFrame', background=bg_color)
-style.configure('TLabel', background=bg_color, foreground=fg_color, font=("Helvetica", 10))
-style.configure('Header.TLabel', font=("Helvetica", 16, "bold"))
-style.configure('TEntry', fieldbackground='#404040', foreground=fg_color, insertcolor=fg_color)
-style.configure('TButton', background=accent_color, foreground='white', font=("Helvetica", 10, "bold"))
-style.map('TButton', background=[('active', '#5c85d6')], foreground=[('active', 'white')])
+style.configure('TLabel', background=bg_color, foreground=fg_color, font=("Segoe UI", 10))
+style.configure('Header.TLabel', font=("Segoe UI", 16, "bold"), foreground=accent_color)
+style.configure('TEntry', fieldbackground='#ffffff', foreground=fg_color, insertcolor=fg_color)
+style.configure('TButton', background=accent_color, foreground='white', font=("Segoe UI", 10, "bold"))
+style.map('TButton', background=[('active', '#0056b3')], foreground=[('active', 'white')])
 
+# Set up variables for the input fields
 company_value_var = tk.DoubleVar()
 current_stock_var = tk.DoubleVar()
 old_unit_var = tk.DoubleVar()
