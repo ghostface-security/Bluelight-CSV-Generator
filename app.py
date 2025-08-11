@@ -1,12 +1,13 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 import csv
 
 def make_csv():
     """
     Calculates financial data and writes it to a CSV file.
     Gathers values from the GUI, performs calculations, and handles
-    potential errors with a messagebox.
+    potential errors with a messagebox. It now prompts the user to
+    choose the save location for the CSV file.
     """
     try:
         # Get values from the GUI variables
@@ -14,11 +15,16 @@ def make_csv():
         current_stock_count = current_stock_var.get()
         old_price_per_unit = old_unit_var.get()
         new_price_per_unit = new_unit_var.get()
-        csv_file_name = file_name_var.get()
 
-        # Check for a valid file name
-        if not csv_file_name:
-            messagebox.showerror("Error", "Please enter a CSV file name.")
+        # Open a file dialog to ask the user where to save the file
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".csv",
+            filetypes=[("CSV files", "*.csv")],
+            initialfile="bluelight_report.csv"
+        )
+        
+        # If the user cancels the dialog, stop the function
+        if not file_path:
             return
 
         # Perform the financial calculations
@@ -29,8 +35,8 @@ def make_csv():
         new_value = company_assets + year_profit
         quarter_profit = year_profit * 0.25
 
-        # Write the data to a new CSV file
-        with open(csv_file_name, "w", newline='') as csvfile:
+        # Write the data to the chosen CSV file
+        with open(file_path, "w", newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',')
             headers = [
                 "START-OF-YEAR-VALUE", "OLD-COMPANY-VALUE", "END-OF-YEAR-VALUE",
@@ -43,7 +49,7 @@ def make_csv():
             ]
             writer.writerow(data_row)
 
-        messagebox.showinfo("Success", f"CSV file '{csv_file_name}' created successfully!")
+        messagebox.showinfo("Success", f"CSV file '{file_path}' created successfully!")
 
     except ValueError:
         messagebox.showerror("Error", "Please ensure all financial fields contain valid numbers.")
@@ -78,7 +84,6 @@ company_value_var = tk.DoubleVar()
 current_stock_var = tk.DoubleVar()
 old_unit_var = tk.DoubleVar()
 new_unit_var = tk.DoubleVar()
-file_name_var = tk.StringVar(value="bluelight_report.csv")
 
 main_frame = ttk.Frame(app, padding="20 20 20 20")
 main_frame.pack(fill='both', expand=True)
@@ -88,8 +93,8 @@ ttk.Label(main_frame, text="Financial Report Generator", style='Header.TLabel').
 input_frame = ttk.Frame(main_frame)
 input_frame.pack(pady=10)
 
-field_labels = ["Assets:", "Stock:", "Price Per Unit:", "Expected Per Unit:", "CSV File Name:"]
-variables = [company_value_var, current_stock_var, old_unit_var, new_unit_var, file_name_var]
+field_labels = ["Assets:", "Stock:", "Price Per Unit:", "Expected Per Unit:"]
+variables = [company_value_var, current_stock_var, old_unit_var, new_unit_var]
 
 for i, label_text in enumerate(field_labels):
     label = ttk.Label(input_frame, text=label_text)
