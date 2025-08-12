@@ -3,12 +3,6 @@ from tkinter import ttk, messagebox, filedialog
 import csv
 
 def make_csv():
-    """
-    Calculates financial data and writes it to a CSV file.
-    Gathers values from the GUI, performs calculations, and handles
-    potential errors with a messagebox. It now prompts the user to
-    choose the save location for the CSV file.
-    """
     try:
         # Get values from the GUI variables
         company_assets = company_value_var.get()
